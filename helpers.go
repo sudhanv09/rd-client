@@ -32,7 +32,7 @@ func httpClient(api_key string) *Client {
 
 func (c *Client) getReq(endpoint string) ([]byte, error) {
 
-	reqUrl := api_url.ResolveReference(&url.URL{Path: "1.0/" + endpoint})
+	reqUrl := api_url.ResolveReference(&url.URL{Path: "1.0" + endpoint})
 	req, err := http.NewRequest("GET", reqUrl.String(), nil)
 	if err != nil {
 		log.Fatal(err)
@@ -46,6 +46,31 @@ func (c *Client) getReq(endpoint string) ([]byte, error) {
 		return nil, err
 	}
 
+	defer resp.Body.Close()
+	resBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("Couldnt read body")
+	}
+
+	return resBody, nil
+}
+
+func (c *Client) postReq(endpoint string, data url.Values) ([]byte, error) {
+	reqUrl := api_url.ResolveReference(&url.URL{Path: "1.0" + endpoint, RawQuery: data.Encode()})
+	req, err := http.NewRequest("GET", reqUrl.String(), nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	req.Header.Add("Authorization", "Bearer "+c.apiKey)
+
+	resp, err := c.c.Do(req)
+	if err != nil {
+		fmt.Println("Error when sending post request")
+		return nil, err
+	}
+
+	fmt.Println(resp.Status)
 	defer resp.Body.Close()
 	resBody, err := io.ReadAll(resp.Body)
 	if err != nil {
