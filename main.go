@@ -1,5 +1,12 @@
 package main
 
+import "fmt"
+
 func main() {
-	rdGetUser()
+	c := httpClient(getApiKey())
+	t, err := c.rdGetUser()
+	if err != nil {
+		fmt.Println("user fetch failed")
+	}
+	fmt.Println(t)
 }
