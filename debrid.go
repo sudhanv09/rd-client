@@ -48,13 +48,14 @@ func (c *Client) rdAddMagnet(magnet string) (rdAddMagnetSchema, error) {
 
 	data := url.Values{}
 	data.Set("magnet", magnet)
+	data.Set("host", "real-debrid.com")
 
 	resBody, err := c.postReq("/torrents/addMagnet", data)
 	if err != nil {
 		return rdAddMagnetSchema{}, err
 	}
 
-	fmt.Println(resBody)
+	fmt.Println(string(resBody))
 
 	mag := rdAddMagnetSchema{}
 	if err := json.Unmarshal(resBody, &mag); err != nil {
@@ -66,10 +67,10 @@ func (c *Client) rdAddMagnet(magnet string) (rdAddMagnetSchema, error) {
 
 func (c *Client) rdGetFileInfo(id string) (rdAddMagnetSchema, error) {
 
-	data := url.Values{}
-	data.Set("magnet", id)
+	params := url.Values{}
+	params.Set("id", id)
 
-	resBody, err := c.postReq("/torrents/info", data)
+	resBody, err := c.getReqWithParams("/torrents/info", params)
 	if err != nil {
 		return rdAddMagnetSchema{}, err
 	}

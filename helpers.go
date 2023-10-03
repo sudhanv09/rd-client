@@ -55,7 +55,8 @@ func (c *Client) getReq(endpoint string) ([]byte, error) {
 	return resBody, nil
 }
 
-func (c *Client) postReq(endpoint string, data url.Values) ([]byte, error) {
+func (c *Client) getReqWithParams(endpoint string, data url.Values) ([]byte, error) {
+
 	reqUrl := api_url.ResolveReference(&url.URL{Path: "1.0" + endpoint, RawQuery: data.Encode()})
 	req, err := http.NewRequest("GET", reqUrl.String(), nil)
 	if err != nil {
@@ -66,11 +67,10 @@ func (c *Client) postReq(endpoint string, data url.Values) ([]byte, error) {
 
 	resp, err := c.c.Do(req)
 	if err != nil {
-		fmt.Println("Error when sending post request")
+		fmt.Println("Error when sending get request")
 		return nil, err
 	}
 
-	fmt.Println(resp.Status)
 	defer resp.Body.Close()
 	resBody, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -78,5 +78,37 @@ func (c *Client) postReq(endpoint string, data url.Values) ([]byte, error) {
 	}
 
 	return resBody, nil
+}
 
+func (c *Client) postReq(endpoint string, data url.Values) ([]byte, error) {
+	reqUrl := api_url.ResolveReference(&url.URL{Path: "1.0" + endpoint, RawQuery: data.Encode()})
+
+	mod, err := url.QueryUnescape(reqUrl.String())
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(mod)
+
+	req, err := http.NewRequest("POST", mod, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	req.Header.Add("Authorization", "Bearer "+c.apiKey)
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	resp, err := c.c.Do(req)
+	if err != nil {
+		fmt.Println("Error when sending post request")
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+	resBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("Couldnt read body")
+	}
+
+	return resBody, nil
 }
