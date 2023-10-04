@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
@@ -58,6 +59,9 @@ func (c *Client) getReq(endpoint string) ([]byte, error) {
 func (c *Client) getReqWithParams(endpoint string, data url.Values) ([]byte, error) {
 
 	reqUrl := api_url.ResolveReference(&url.URL{Path: "1.0" + endpoint, RawQuery: data.Encode()})
+
+	fmt.Println(reqUrl)
+
 	req, err := http.NewRequest("GET", reqUrl.String(), nil)
 	if err != nil {
 		log.Fatal(err)
@@ -81,16 +85,10 @@ func (c *Client) getReqWithParams(endpoint string, data url.Values) ([]byte, err
 }
 
 func (c *Client) postReq(endpoint string, data url.Values) ([]byte, error) {
-	reqUrl := api_url.ResolveReference(&url.URL{Path: "1.0" + endpoint, RawQuery: data.Encode()})
+	reqUrl := api_url.ResolveReference(&url.URL{Path: "1.0" + endpoint})
+	fmt.Println(reqUrl)
 
-	mod, err := url.QueryUnescape(reqUrl.String())
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println(mod)
-
-	req, err := http.NewRequest("POST", mod, nil)
+	req, err := http.NewRequest("POST", reqUrl.String(), strings.NewReader(data.Encode()))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -102,6 +100,10 @@ func (c *Client) postReq(endpoint string, data url.Values) ([]byte, error) {
 	if err != nil {
 		fmt.Println("Error when sending post request")
 		return nil, err
+	}
+
+	if resp.StatusCode == 204 {
+		fmt.Println("Files selected")
 	}
 
 	defer resp.Body.Close()

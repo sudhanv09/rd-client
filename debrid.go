@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
+	"strconv"
+	"strings"
 )
 
 var api_url = url.URL{
@@ -48,14 +50,11 @@ func (c *Client) rdAddMagnet(magnet string) (rdAddMagnetSchema, error) {
 
 	data := url.Values{}
 	data.Set("magnet", magnet)
-	data.Set("host", "real-debrid.com")
 
 	resBody, err := c.postReq("/torrents/addMagnet", data)
 	if err != nil {
 		return rdAddMagnetSchema{}, err
 	}
-
-	fmt.Println(string(resBody))
 
 	mag := rdAddMagnetSchema{}
 	if err := json.Unmarshal(resBody, &mag); err != nil {
@@ -65,20 +64,54 @@ func (c *Client) rdAddMagnet(magnet string) (rdAddMagnetSchema, error) {
 	return mag, nil
 }
 
-func (c *Client) rdGetFileInfo(id string) (rdAddMagnetSchema, error) {
+func (c *Client) rdGetFileInfo(id string) (rdTorrentInfoSchema, error) {
 
-	params := url.Values{}
-	params.Set("id", id)
-
-	resBody, err := c.getReqWithParams("/torrents/info", params)
+	resBody, err := c.getReq(fmt.Sprintf("/torrents/info/%s", id))
 	if err != nil {
-		return rdAddMagnetSchema{}, err
+		return rdTorrentInfoSchema{}, err
 	}
 
-	mag := rdAddMagnetSchema{}
-	if err := json.Unmarshal(resBody, &mag); err != nil {
-		return rdAddMagnetSchema{}, fmt.Errorf("Decode failed")
+	fileInfo := rdTorrentInfoSchema{}
+	if err := json.Unmarshal(resBody, &fileInfo); err != nil {
+		return rdTorrentInfoSchema{}, fmt.Errorf("Decode failed")
 	}
 
-	return mag, nil
+	return fileInfo, nil
+}
+
+func (c *Client) rdSelectFiles(id string) error {
+
+	torrentFiles, err := c.rdGetFileInfo(id)
+	if err != nil {
+		fmt.Errorf("Couldnt get files from the torrent")
+	}
+
+	files := getFileIdsFromTorrent(torrentFiles)
+
+	data := url.Values{}
+	data.Set("files", files)
+	req, err := c.postReq("/torrents/selectFiles/"+id, data)
+
+	fmt.Println(string(req))
+
+	if err != nil {
+		fmt.Errorf("Couldnt make the request")
+	}
+	return nil
+}
+
+func getFileIdsFromTorrent(val rdTorrentInfoSchema) string {
+	allowedFileTypes := []string{"mkv", "srt"}
+	var fileIds []string
+
+	for _, val := range val.Files {
+		for _, id := range allowedFileTypes {
+			if strings.Contains(val.Path, id) {
+				fileIds = append(fileIds, strconv.Itoa(val.Id))
+			}
+		}
+	}
+	downloadFiles := strings.Join(fileIds, ",")
+
+	return downloadFiles
 }
