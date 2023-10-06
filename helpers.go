@@ -86,7 +86,6 @@ func (c *Client) getReqWithParams(endpoint string, data url.Values) ([]byte, err
 
 func (c *Client) postReq(endpoint string, data url.Values) ([]byte, error) {
 	reqUrl := api_url.ResolveReference(&url.URL{Path: "1.0" + endpoint})
-	fmt.Println(reqUrl)
 
 	req, err := http.NewRequest("POST", reqUrl.String(), strings.NewReader(data.Encode()))
 	if err != nil {
@@ -100,10 +99,6 @@ func (c *Client) postReq(endpoint string, data url.Values) ([]byte, error) {
 	if err != nil {
 		fmt.Println("Error when sending post request")
 		return nil, err
-	}
-
-	if resp.StatusCode == 204 {
-		fmt.Println("Files selected")
 	}
 
 	defer resp.Body.Close()

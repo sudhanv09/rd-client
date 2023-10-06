@@ -68,3 +68,16 @@ type TorrentFiles struct {
 	Bytes    int    `json:"bytes,omitempty"`
 	Selected int    `json:"selected,omitempty"`
 }
+
+type UnrestrictLink struct {
+  Id         string `json:"id,omitempty"`
+  Filename   string `json:"filename,omitempty"`
+  MimeType   string `json:"mimeType,omitempty"`
+  Filesize   int    `json:"filesize,omitempty"`
+  Link       string `json:"link,omitempty"`
+  Host       string `json:"host,omitempty"`
+  Chunks     int    `json:"chunks,omitempty"`
+  Crc        int    `json:"crc,omitempty"`
+  Download   string `json:"download,omitempty"`
+  Streamable int    `json:"streamable,omitempty"`
+}
