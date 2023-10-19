@@ -1,2 +1,4 @@
 .env
 rd-go
+.idea
+go_build_sudhanv09_rd_go

@@ -15,10 +15,9 @@ var api_url = url.URL{
 }
 
 /* endpoint /user
-* Params: 
+* Params:
 * returns: All the details about the user in Json
-*/
-
+ */
 func (c *Client) rdGetUser() (rdUserSchema, error) {
 	resBody, err := c.getReq("/user")
 	if err != nil {
@@ -36,9 +35,9 @@ func (c *Client) rdGetUser() (rdUserSchema, error) {
 }
 
 /* endpoint /torrents
-* Params: 
-* returns: all the torrents added by the user 
-*/
+* Params:
+* returns: all the torrents added by the user
+ */
 
 func (c *Client) rdGetTorrents() ([]rdTorrentSchema, error) {
 	resBody, err := c.getReq("/torrents")
@@ -46,7 +45,7 @@ func (c *Client) rdGetTorrents() ([]rdTorrentSchema, error) {
 		return nil, fmt.Errorf("Couldnt get user")
 	}
 
-	torrents := []rdTorrentSchema{}
+	var torrents []rdTorrentSchema
 	if err := json.Unmarshal(resBody, &torrents); err != nil {
 		return nil, fmt.Errorf("Decode failed")
 	}
@@ -57,7 +56,7 @@ func (c *Client) rdGetTorrents() ([]rdTorrentSchema, error) {
 /* endpoint /torrents/addMagnet
 * Params: magnet link string
 * returns: id and url of the torrent added
-*/
+ */
 
 func (c *Client) rdAddMagnet(magnet string) (rdAddMagnetSchema, error) {
 	data := url.Values{}
@@ -79,7 +78,7 @@ func (c *Client) rdAddMagnet(magnet string) (rdAddMagnetSchema, error) {
 /* endpoint /torrents/info/{id}.
 * Params: Id of the torrrent whose info is needed
 * returns: all the details of the torrent in json format
-*/
+ */
 
 func (c *Client) rdGetFileInfo(id string) (rdTorrentInfoSchema, error) {
 
@@ -99,7 +98,7 @@ func (c *Client) rdGetFileInfo(id string) (rdTorrentInfoSchema, error) {
 /* endpoint /torrents/selectFiles/{id}.
 * Params: Id of the torrent, we can get id from /torrents/info
 * returns: Nothing
-*/
+ */
 func (c *Client) rdSelectFiles(id string) error {
 
 	torrentFiles, err := c.rdGetFileInfo(id)
@@ -124,17 +123,17 @@ func (c *Client) rdSelectFiles(id string) error {
 /* endpoint /unrestrict/link.
 * Params: Link to the torrent
 * returns: Unrestricted real-debrid link which can be downloaded by aria
-*/
-func (c *Client) rdUnrestrictLinks(link string) (UnrestrictLink, error){
-  data := url.Values{}
-  data.Set("link", link)
+ */
+func (c *Client) rdUnrestrictLinks(link string) (UnrestrictLink, error) {
+	data := url.Values{}
+	data.Set("link", link)
 
-  resp, err := c.postReq("/unrestrict/link", data)
-  if err != nil {
-    return UnrestrictLink{}, err
-  }
+	resp, err := c.postReq("/unrestrict/link", data)
+	if err != nil {
+		return UnrestrictLink{}, err
+	}
 
-  getLink := UnrestrictLink{}
+	getLink := UnrestrictLink{}
 	if err := json.Unmarshal(resp, &getLink); err != nil {
 		return UnrestrictLink{}, fmt.Errorf("Decode failed")
 	}
@@ -156,5 +155,5 @@ func getFileIdsFromTorrent(val rdTorrentInfoSchema) string {
 	}
 	downloadFiles := strings.Join(fileIds, ",")
 
-  return downloadFiles
+	return downloadFiles
 }

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/joho/godotenv"
@@ -108,4 +109,15 @@ func (c *Client) postReq(endpoint string, data url.Values) ([]byte, error) {
 	}
 
 	return resBody, nil
+}
+
+func isMagnetValid(magnet string) bool {
+	regex := `^magnet:\?xt=urn:btih:[0-9a-fA-F]{40}`
+
+	match, err := regexp.MatchString(regex, magnet)
+	if err != nil {
+		return false
+	}
+
+	return match
 }
