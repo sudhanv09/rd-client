@@ -1,5 +1,12 @@
 ﻿
+using System.Diagnostics;
 using rd_client.Lib;
 
-var client = new HttpClient();
-var rdClient = new RdClient(client, "");
+await foreach (string text in new ClipboardWatcher().PollClipboard())
+{
+    Console.WriteLine(text);
+}
+
+
+
+

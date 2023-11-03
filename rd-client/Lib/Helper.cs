@@ -32,38 +32,6 @@ public class Helper
         return string.Join(",", fileIds);
     }
 
-    public async Task<string> GetClipboard()
-    {
-        ProcessStartInfo startInfo = new()
-        {
-            FileName = "wl-paste",
-            CreateNoWindow = true,
-            RedirectStandardError = true,
-            RedirectStandardOutput = true
-        };
-
-        var proc = Process.Start(startInfo);
-        ArgumentNullException.ThrowIfNull(proc);
-        
-        string clipboard = await proc.StandardOutput.ReadToEndAsync();
-        await proc.WaitForExitAsync();
-
-        return clipboard;
-    }
-
-    public async Task<string> PollClipboard()
-    {
-        string lastClipText = "";
-        while (true)
-        {
-            string currentText = await GetClipboard();
-            if (currentText != lastClipText)
-            {
-                lastClipText = currentText;
-                return currentText;
-            }
-            Thread.Sleep(1000);
-        }
-    }
+    
 
 }
