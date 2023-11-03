@@ -39,12 +39,6 @@ public class RdClient : IRdClient
 
     public async Task<RdMagnetResult> RdAddMagnet(string magnet)
     {
-        var validMagnet = new Helper().ValidMagnet(magnet);
-        if (!validMagnet)
-        {
-            throw new ArgumentException("Magnet is not valid");
-        }
-        
         _query.Add("magnet", magnet);
         var payload = _query.ToString();
         
