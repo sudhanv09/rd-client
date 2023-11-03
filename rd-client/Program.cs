@@ -1,2 +1,5 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿
+using rd_client.Lib;
+
+var client = new HttpClient();
+var rdClient = new RdClient(client, "");
