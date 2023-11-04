@@ -19,7 +19,7 @@ public class RdClient : IRdClient
     }
     public async Task<RdUser> RdGetUser()
     {
-        string url = _rdApi + "/user";
+        string url = _rdApi + "user";
         var req = await _client.GetAsync(url);
         Stream request = await req.Content.ReadAsStreamAsync();
 
@@ -29,7 +29,7 @@ public class RdClient : IRdClient
 
     public async Task<RdTorrents> RdGetUserTorrents()
     {
-        string url = _rdApi + "/torrents";
+        string url = _rdApi + "torrents";
         var req = await _client.GetAsync(url);
         Stream request = await req.Content.ReadAsStreamAsync();
 
@@ -42,7 +42,7 @@ public class RdClient : IRdClient
         _query.Add("magnet", magnet);
         var payload = _query.ToString();
         
-        string url = _rdApi + "/torrents/addMagnet/" + payload;
+        string url = _rdApi + "torrents/addMagnet/" + payload;
         
         var req = await _client.GetAsync(url);
         Stream request = await req.Content.ReadAsStreamAsync();
@@ -53,7 +53,7 @@ public class RdClient : IRdClient
 
     public async Task<RdTorrentId> RdTorrentbyId(string id)
     {
-        string url = _rdApi + $"/torrent/{id}";
+        string url = _rdApi + $"torrent/{id}";
         var req = await _client.GetAsync(url);
         Stream request = await req.Content.ReadAsStreamAsync();
 
@@ -77,7 +77,7 @@ public class RdClient : IRdClient
         _query.Add("link", link);
         var payload = _query.ToString();
         
-        string url = _rdApi + "/unrestrict/link/" + payload;
+        string url = _rdApi + "unrestrict/link/" + payload;
         var req = await _client.GetAsync(url);
         Stream request = await req.Content.ReadAsStreamAsync();
 

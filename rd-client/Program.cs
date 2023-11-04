@@ -10,6 +10,10 @@ var aria = new Aria2NetClient("http://localhost:6800/jsonrpc", "");
 
 async Task<List<string>> DebridInit(string clipboard)
 {
+    var user = await rdClient.RdGetUser();
+    if (user.Premium == 0)
+        throw new Exception("User Expired");
+    
     // Add magnet and choose files
     var magnetId = await rdClient.RdAddMagnet(clipboard);
     await rdClient.RdFileSelect(magnetId.Id);
@@ -31,23 +35,30 @@ async Task<List<string>> DebridInit(string clipboard)
 
 async Task App()
 {
+    var downloadCount = 0;
     AnsiConsole.Markup("[green] App running. Watching for magnet links...");
     await foreach (var magnet in new ClipboardWatcher().PollClipboard())
     {
         if (new Helper().ValidMagnet(magnet))
         {
+            
             var downloadLink = await DebridInit(magnet);
             var addUri = await aria.AddUriAsync(downloadLink, new Dictionary<string, object>()
             {
-                { "dir", "/hdd/media/aria" }
-            }, 0);
-
+                { "dir", "/hdd/media/aria" },
+                {"max-concurrent-downloads", "3"},
+                {"split", "16"},
+                // {"max-connection-per-server", "16"},
+                
+            }, downloadCount);
+            downloadCount += 1;
+            
             var active = await aria.TellActiveAsync();
             foreach (var downloads in active)
             {
-                AnsiConsole.Markup($"[blue] {downloads.Files[0].Path} [yellow]{(double)(downloads.CompletedLength/downloads.TotalLength) * 100} [green]{downloads.DownloadSpeed} [/]\n");
+                var progress = (double)(downloads.CompletedLength / downloads.TotalLength) * 100;
+                AnsiConsole.Markup($"[blue] {downloads.Files[0].Path} [yellow]{progress} [green]{downloads.DownloadSpeed} [/]\n");
             }
-
         }
     }
 }
