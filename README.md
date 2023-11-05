@@ -7,6 +7,8 @@ rd-client only works on Wayland as of now as it uses wl-clipboard.
 
 ## Usage
 
+Get Real-Debrid API Key from [https://real-debrid.com/apitoken]
+
 Run aria2c before running the app using: 
 ``` bash
 aria2c --enable-rpc-input --rpc-secret="secret"
