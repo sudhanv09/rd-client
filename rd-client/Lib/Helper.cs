@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using Aria2NET;
 using rd_client.Models;
+using Spectre.Console;
 
 namespace rd_client.Lib;
 
@@ -23,7 +25,7 @@ public class Helper
     /// Only select video files and subtitles from the torrent files
     /// </summary>
     /// <param name="files"></param>
-    /// <returns></returns>
+    /// <returns>String with all the selected file ids</returns>
     public string RdFileSelector(RdTorrentId files)
     {
         var allowedFileTypes = new List<string>() { "mkv", "mp4", "srt" };
@@ -35,5 +37,22 @@ public class Helper
             .ToList();
         
         return string.Join(",", idx);
+    }
+
+    public async Task MonitorDownloads(Aria2NetClient aria)
+    {
+        var downloadsComplete = false;
+        while (!downloadsComplete)
+        {
+            var pollAria = await aria.TellActiveAsync();
+            foreach (var downloads in pollAria)  
+            {
+                if (downloads.Status == "complete")
+                {
+                    downloadsComplete = true;
+                }
+                // TODO Add a progress bar
+            }
+        }
     }
 }

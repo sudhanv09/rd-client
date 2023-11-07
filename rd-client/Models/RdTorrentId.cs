@@ -13,13 +13,13 @@ public class RdTorrentId
     [JsonPropertyName("hash")]
     public string Hash { get; set; }
     [JsonPropertyName("bytes")]
-    public int Bytes { get; set; }
+    public Int64 Bytes { get; set; }
     [JsonPropertyName("original_bytes")]
-    public int OriginalBytes { get; set; }
+    public Int64 OriginalBytes { get; set; }
     [JsonPropertyName("host")]
     public string Host { get; set; }
     [JsonPropertyName("split")]
-    public int Split { get; set; }
+    public Int64 Split { get; set; }
     [JsonPropertyName("progress")]
     public int Progress { get; set; }
     [JsonPropertyName("status")]
@@ -45,7 +45,7 @@ public class TorrentFiles
     [JsonPropertyName("path")]
     public string Path { get; set; }
     [JsonPropertyName("bytes")]
-    public int Bytes { get; set; }
+    public Int64 Bytes { get; set; }
     [JsonPropertyName("selected")]
     public int Selected { get; set; }
 }

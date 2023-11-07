@@ -32,7 +32,7 @@ async Task<List<string>> DebridInit(string clipboard)
 async Task App()
 {
     var downloadCount = 0;
-    AnsiConsole.Markup("[green] App running. Watching for magnet links...[/]");
+    AnsiConsole.Markup("[green] App running. Watching for magnet links...[/]\n");
     await foreach (var magnet in new ClipboardWatcher().PollClipboard())
     {
         if (new Helper().ValidMagnet(magnet))
@@ -51,11 +51,13 @@ async Task App()
             var active = await aria.TellActiveAsync();
             foreach (var downloads in active)
             {
-                var progress = (double)(downloads.CompletedLength / downloads.TotalLength) * 100;
-                AnsiConsole.Markup($"[blue] {downloads.Files[0].Path} [yellow]{progress} [green]{downloads.DownloadSpeed} [/]");
+                if (downloads.TotalLength > 0)
+                { 
+                    var progress = (double)(downloads.CompletedLength / downloads.TotalLength) * 100;
+                    AnsiConsole.MarkupInterpolated($"[blue]{downloads.Files[0].Path}[/] [yellow]{progress}[/] [green]{downloads.DownloadSpeed}[/]");
+                }
             }
         }
     }
 }
-
 await App();
