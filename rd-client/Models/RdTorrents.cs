@@ -11,7 +11,7 @@ public class RdTorrents
     [JsonPropertyName("hash")]
     public string Hash { get; set; }
     [JsonPropertyName("bytes")]
-    public int Bytes { get; set; }
+    public Int64 Bytes { get; set; }
     [JsonPropertyName("host")]
     public string Host { get; set; }
     [JsonPropertyName("split")]

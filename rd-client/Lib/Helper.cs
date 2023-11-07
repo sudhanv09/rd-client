@@ -19,19 +19,21 @@ public class Helper
         return true;
     }
 
+    /// <summary>
+    /// Only select video files and subtitles from the torrent files
+    /// </summary>
+    /// <param name="files"></param>
+    /// <returns></returns>
     public string RdFileSelector(RdTorrentId files)
     {
         var allowedFileTypes = new List<string>() { "mkv", "mp4", "srt" };
-        var fileIds = new List<string>();
-
-        foreach (var file in files.Files)
-        {
-            var idx = allowedFileTypes.Any(f => file.Path.Contains(f)).ToString();
-            fileIds.Append(idx);
-        }
-        return string.Join(",", fileIds);
+        
+        // If the video filename contains allowedFileTypes, get the Id
+        List<string> idx = files.Files
+            .Where(file => allowedFileTypes.Any(t => file.Path.Contains(t)))
+            .Select(i => i.Id.ToString())
+            .ToList();
+        
+        return string.Join(",", idx);
     }
-
-    
-
 }

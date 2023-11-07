@@ -11,13 +11,13 @@ public class RdUnrestrict
     [JsonPropertyName("mimeType")]
     public string MimeType { get; set; }
     [JsonPropertyName("filesize")]
-    public int Filesize { get; set; }
+    public Int64 Filesize { get; set; }
     [JsonPropertyName("link")]
     public string Link { get; set; }
     [JsonPropertyName("host")]
     public string Host { get; set; }
     [JsonPropertyName("chunks")]
-    public int Chunks { get; set; }
+    public Int64 Chunks { get; set; }
     [JsonPropertyName("crc")]
     public int Crc { get; set; }
     [JsonPropertyName("download")]
