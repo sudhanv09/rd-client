@@ -2,26 +2,28 @@ using System.Collections.Specialized;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using rd_client.Models;
 using System.Web;
+using rd_client.Lib;
+using rd_client.Models;
 
-namespace rd_client.Lib;
+namespace rd_client.DebridApi;
 
 public class RdClient : IRdClient
 {
     private readonly HttpClient _client;
     private string _rdApi = "https://api.real-debrid.com/rest/1.0/";
-    private NameValueCollection _query = HttpUtility.ParseQueryString(String.Empty);
-    public RdClient(HttpClient client, string apiKey)
+    private NameValueCollection _query = HttpUtility.ParseQueryString(string.Empty);
+    public RdClient()
     {
-        _client = client;
+        _client = new HttpClient();
+        var apiKey = Environment.GetEnvironmentVariable("rd_api");
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
     }
     public async Task<RdUser> RdGetUser()
     {
-        string url = _rdApi + "user";
+        var url = _rdApi + "user";
         var req = await _client.GetAsync(url);
-        Stream request = await req.Content.ReadAsStreamAsync();
+        var request = await req.Content.ReadAsStreamAsync();
 
         var result = await JsonSerializer.DeserializeAsync<RdUser>(request);
         return result;
@@ -29,9 +31,9 @@ public class RdClient : IRdClient
 
     public async Task<List<RdTorrents>> RdGetUserTorrents()
     {
-        string url = _rdApi + "torrents";
+        var url = _rdApi + "torrents";
         var req = await _client.GetAsync(url);
-        Stream request = await req.Content.ReadAsStreamAsync();
+        var request = await req.Content.ReadAsStreamAsync();
 
         var result = await JsonSerializer.DeserializeAsync<List<RdTorrents>>(request);
         return result;
@@ -41,11 +43,10 @@ public class RdClient : IRdClient
     {
         _query.Add("magnet", magnet);
         var payload = new StringContent(_query.ToString(), Encoding.UTF8, "application/json");
-        
-        string url = _rdApi + "torrents/addMagnet/";
+        var url = _rdApi + "torrents/addMagnet/";
         
         var req = await _client.PostAsync(url, payload);
-        Stream request = await req.Content.ReadAsStreamAsync();
+        var request = await req.Content.ReadAsStreamAsync();
 
         var result = await JsonSerializer.DeserializeAsync<RdMagnetResult>(request);
         return result;
@@ -53,9 +54,9 @@ public class RdClient : IRdClient
 
     public async Task<RdTorrentId> RdTorrentbyId(string id)
     {
-        string url = _rdApi + $"torrents/info/{id}";
+        var url = _rdApi + $"torrents/info/{id}";
         var req = await _client.GetAsync(url);
-        Stream request = await req.Content.ReadAsStreamAsync();
+        var request = await req.Content.ReadAsStreamAsync();
 
         var result = await JsonSerializer.DeserializeAsync<RdTorrentId>(request);
         return result;
@@ -78,9 +79,9 @@ public class RdClient : IRdClient
         _query.Add("link", link);
         var payload = new StringContent(_query.ToString(), Encoding.UTF8, "application/json");
         
-        string url = _rdApi + "unrestrict/link/";
+        var url = _rdApi + "unrestrict/link/";
         var req = await _client.PostAsync(url, payload);
-        Stream request = await req.Content.ReadAsStreamAsync();
+        var request = await req.Content.ReadAsStreamAsync();
 
         var result = await JsonSerializer.DeserializeAsync<RdUnrestrict>(request);
         return result;

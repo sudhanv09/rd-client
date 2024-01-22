@@ -1,6 +1,6 @@
 using rd_client.Models;
 
-namespace rd_client.Lib;
+namespace rd_client.DebridApi;
 
 public interface IRdClient
 {

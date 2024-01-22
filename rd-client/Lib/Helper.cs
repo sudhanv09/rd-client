@@ -38,21 +38,6 @@ public class Helper
         
         return string.Join(",", idx);
     }
-
-    public async Task MonitorDownloads(Aria2NetClient aria)
-    {
-        var downloadsComplete = false;
-        while (!downloadsComplete)
-        {
-            var pollAria = await aria.TellActiveAsync();
-            foreach (var downloads in pollAria)  
-            {
-                if (downloads.Status == "complete")
-                {
-                    downloadsComplete = true;
-                }
-                // TODO Add a progress bar
-            }
-        }
-    }
+    
+    
 }

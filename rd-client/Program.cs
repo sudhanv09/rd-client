@@ -1,63 +1,28 @@
 ﻿
-using System.Diagnostics;
-using Aria2NET;
 using rd_client.Lib;
-using Spectre.Console;
+using Spectre.Console.Cli;
 
-var client = new HttpClient();
-var rdClient = new RdClient(client, "");
-var aria = new Aria2NetClient("http://localhost:6800/jsonrpc", "");
+DotNetEnv.Env.Load();
 
-async Task<List<string>> DebridInit(string clipboard)
+var app = new CommandApp();
+app.Configure(conf =>
 {
-    // Add magnet and choose files
-    var magnetId = await rdClient.RdAddMagnet(clipboard);
-    await rdClient.RdFileSelect(magnetId.Id);
+    conf.AddCommand<AddMagnetCmd>("magnet")
+        .WithDescription("Add magnet links");
     
-    // Get Links from torrent, check if RD has completed download and unrestrict them.
-    var fileInfo = await rdClient.RdTorrentbyId(magnetId.Id);
-    var unrestrictedLinks = new List<string>();
+    conf.AddCommand<AddDebridCmd>("debrid")
+        .WithDescription("Add debrid links")
+        .WithExample(["debrid", "https://real-debrid.com/d/IIxxx...", "--download"]);
     
-    if (fileInfo.Status == "downloaded")
-    {
-        foreach (var link in fileInfo.Links)
-        {
-            var links = await rdClient.RdUnrestrictLink(link);
-            unrestrictedLinks.Add(links.Download);
-        }
-    }
-    return unrestrictedLinks;
-}
+    conf.AddCommand<GetTorrentsCmd>("list")
+        .WithDescription("Get all torrents from real debrid");
+});
 
-async Task App()
-{
-    var downloadCount = 0;
-    AnsiConsole.Markup("[green] App running. Watching for magnet links...[/]\n");
-    await foreach (var magnet in new ClipboardWatcher().PollClipboard())
-    {
-        if (new Helper().ValidMagnet(magnet))
-        {
-            var downloadLink = await DebridInit(magnet);
-            var addUri = await aria.AddUriAsync(downloadLink, new Dictionary<string, object>()
-            {
-                { "dir", "/hdd/media/aria" },
-                {"max-concurrent-downloads", "3"},
-                {"split", "16"},
-                // {"max-connection-per-server", "16"},
-                
-            }, downloadCount);
-            downloadCount += 1;
-            
-            var active = await aria.TellActiveAsync();
-            foreach (var downloads in active)
-            {
-                if (downloads.TotalLength > 0)
-                { 
-                    var progress = (double)(downloads.CompletedLength / downloads.TotalLength) * 100;
-                    AnsiConsole.MarkupInterpolated($"[blue]{downloads.Files[0].Path}[/] [yellow]{progress}[/] [green]{downloads.DownloadSpeed}[/]");
-                }
-            }
-        }
-    }
-}
-await App();
+app.Run(args);
+
+
+
+
+
+
+
