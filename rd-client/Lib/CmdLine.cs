@@ -11,7 +11,7 @@ public sealed class AddMagnetSetting : CommandSettings
     public string Magnet { get; set; }
     [CommandOption("-d|--download")]
     public bool? Download { get; set; }
-    [CommandOption("-w|--watch")]
+    [CommandOption("-s|--stream")]
     public bool? Stream { get; set; }
 }
 public sealed class AddDebridSetting : CommandSettings
@@ -37,7 +37,7 @@ public class AddMagnetCmd : Command<AddMagnetSetting>
         var magnet = helper.ValidMagnet(cmd.Magnet);
         if (!magnet) throw new Exception("Magnet not valid");
         
-        AnsiConsole.Markup("Adding magnet...");
+        AnsiConsole.Markup("Adding magnet...\n");
         var task = Task.Run(async () =>
         {
             await new DebridApp().AddMagnet(cmd.Magnet);

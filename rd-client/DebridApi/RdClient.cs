@@ -16,7 +16,7 @@ public class RdClient : IRdClient
     public RdClient()
     {
         _client = new HttpClient();
-        var apiKey = Environment.GetEnvironmentVariable("rd_api");
+        var apiKey = Environment.GetEnvironmentVariable("RD_KEY");
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
     }
     public async Task<RdUser> RdGetUser()

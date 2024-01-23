@@ -2,7 +2,7 @@
 using rd_client.Lib;
 using Spectre.Console.Cli;
 
-DotNetEnv.Env.Load();
+DotNetEnv.Env.TraversePath().Load();
 
 var app = new CommandApp();
 app.Configure(conf =>
