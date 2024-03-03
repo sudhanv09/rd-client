@@ -1,5 +1,4 @@
-﻿
-using rd_client.Lib;
+﻿using rd_client.Cli;
 using Spectre.Console.Cli;
 
 DotNetEnv.Env.TraversePath().Load();
@@ -19,7 +18,6 @@ app.Configure(conf =>
 });
 
 app.Run(args);
-
 
 
 

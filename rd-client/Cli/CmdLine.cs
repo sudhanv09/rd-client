@@ -1,9 +1,9 @@
 using rd_client.DebridApi;
-using rd_client.Models;
+using rd_client.Lib;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-namespace rd_client.Lib;
+namespace rd_client.Cli;
 
 public sealed class AddMagnetSetting : CommandSettings
 {
